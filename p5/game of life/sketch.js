@@ -12,7 +12,7 @@ function make2DArray(cols, rows) {
 }
 
 function setup() {
-  createCanvas(600, 400);
+  createCanvas(1200, 600);
   cols = width / resolution;
   rows = height / resolution;
   
@@ -36,7 +36,6 @@ function draw() {
       if(grid[i][j] == 1) {
         fill(255);
         stroke(0);
-        // O quadrado que é criado é automaticamente branco
         rect(x, y, resolution - 1, resolution - 1);
       }
     }
