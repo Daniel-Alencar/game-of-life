@@ -1,18 +1,23 @@
+class Cell {
+  value;
+
+  constructor(value) {
+    if(value === null) {
+      this.value = floor(random(2));
+    } else {
+      this.value = value;
+    }
+  }
+}
+
 let grid;
 let cols;
 let rows;
 let resolution = 10;
-
-function make2DArray(cols, rows) {
-  let arr = new Array(cols);
-  for(let i = 0; i < arr.length; i++) {
-    arr[i] = new Array(rows);
-  }
-  return arr;
-}
+let playClicked = false;
 
 function setup() {
-  createCanvas(1200, 600);
+  createCanvas(800, 500);
   cols = width / resolution;
   rows = height / resolution;
   
@@ -20,7 +25,7 @@ function setup() {
 
   for(let i = 0; i < cols; i++) {
     for(let j = 0; j < rows; j++) {
-      grid[i][j] = floor(random(2));
+      grid[i][j] = new Cell(null);
     }
   }
 }
@@ -33,7 +38,7 @@ function draw() {
       let x = i * resolution;
       let y = j * resolution;
 
-      if(grid[i][j] == 1) {
+      if(grid[i][j].value == 1) {
         fill(255);
         stroke(0);
         rect(x, y, resolution - 1, resolution - 1);
@@ -47,22 +52,30 @@ function draw() {
   for(let i = 0; i < cols; i++) {
     for(let j = 0; j < rows; j++) {
 
-      let state = grid[i][j];
+      let state = grid[i][j].value;
       // Count live neighbors!
       let neighbors = countNeighbors(grid, i, j);
 
       if(state == 0 && neighbors == 3) {
-        next[i][j] = 1;
+        next[i][j] = new Cell(1);
 
       } else if(state == 1 && (neighbors < 2 || neighbors > 3)) {
-        next[i][j] = 0;
+        next[i][j] = new Cell(0);
 
       } else {
-        next[i][j] = state;
+        next[i][j] = new Cell(state);
       }
     }
   }
   grid = next;
+}
+
+function make2DArray(cols, rows) {
+  let arr = new Array(cols);
+  for(let i = 0; i < arr.length; i++) {
+    arr[i] = new Array(rows);
+  }
+  return arr;
 }
 
 function countNeighbors(grid, x, y) {
@@ -73,9 +86,20 @@ function countNeighbors(grid, x, y) {
       let col = (x + i + cols) % cols;
       let row = (y + j + rows) % rows;
 
-      sum += grid[col][row];
+      sum += grid[col][row].value;
     }
   }
-  sum -= grid[x][y];
+  sum -= grid[x][y].value;
   return sum;
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const drawButton = document.querySelector('.draw-button');
+  drawButton.onclick = () => {
+    for(let i = 0; i < cols; i++) {
+      for(let j = 0; j < rows; j++) {
+        grid[i][j] = new Cell(0);
+      }
+    }
+  };
+});
