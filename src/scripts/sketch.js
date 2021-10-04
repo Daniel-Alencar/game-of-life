@@ -1,33 +1,9 @@
-class Cell {
-  constructor(value) {
-    if(value === null) {
-      this.value = floor(random(2));
-    } else {
-      this.value = value;
-    }
-  }
-}
-
 let grid;
 let cols;
 let rows;
 let resolution = 10;
 let rects = [];
 let playing = false;
-
-class MyRect {
-  constructor() {
-    this.px = pwinMouseX - (pwinMouseX % resolution);
-    this.py = pwinMouseY - (pwinMouseY % resolution);
-    this.x = winMouseX - (winMouseX % resolution);
-    this.y = winMouseY - (winMouseY % resolution);
-  }
-  show() {
-    stroke(0);
-    fill(255);
-    rect(this.px, this.py, resolution, resolution);
-  }
-}
 
 function setup() {
   createCanvas(800, 500);
@@ -133,5 +109,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const playButton = document.querySelector('.play-button');
   playButton.onclick = () => {
     playing = !playing;
+    playButton.value = playing ? "Pause" : "Play";
+  };
+
+  const randomButton = document.querySelector('.random-button');
+  randomButton.onclick = () => {
+    for(let i = 0; i < cols; i++) {
+      for(let j = 0; j < rows; j++) {
+        grid[i][j] = new Cell(null);
+      }
+    }
   };
 });
