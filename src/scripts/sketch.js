@@ -33,6 +33,9 @@ function setup() {
   createCanvas(800, 500);
   cols = width / resolution;
   rows = height / resolution;
+
+  console.log("COLUMNS == ", cols);
+  console.log("ROWS == ", rows);
   
   grid = make2DArray(cols, rows);
 
@@ -51,18 +54,19 @@ function draw() {
       let rect = new MyRect();
       rects.push(rect);
   
-      let j = rect.px / resolution;
-      let i = rect.py / resolution;
-      console.log("i == ", i, " e j == ", j);
-  
-      grid[i][j].value = 1;
-      console.log(grid[i][j]);
+      let i = rect.px / resolution;
+      let j = rect.py / resolution;
+      console.log("i(collumn) == ", i, " e j(row) == ", j);
+      
+      if(i < cols && j < rows) {
+        grid[i][j].value = 1;
+      }
     }
   
     for(let rect of rects) {
       rect.show();
     }
-    
+
   } else {
     
     for(let i = 0; i < cols; i++) {
