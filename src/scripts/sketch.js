@@ -12,26 +12,20 @@ let grid;
 let cols;
 let rows;
 let resolution = 10;
+let rects = [];
+let playing = false;
 
 class MyRect {
   constructor() {
-    this.px = pwinMouseX;
-    this.py = pwinMouseY;
-    this.x = winMouseX;
-    this.y = winMouseY;
+    this.px = pwinMouseX - (pwinMouseX % resolution);
+    this.py = pwinMouseY - (pwinMouseY % resolution);
+    this.x = winMouseX - (winMouseX % resolution);
+    this.y = winMouseY - (winMouseY % resolution);
   }
   show() {
-    let PX = this.px - (this.px % resolution);
-    let PY = this.py - (this.py % resolution);
     stroke(0);
     fill(255);
-    rect(PX, PY, resolution, resolution);
-
-    let X = this.x - (this.x % resolution);
-    let Y = this.y - (this.y % resolution);
-    stroke(0);
-    fill(255);
-    rect(X, Y, resolution, resolution);
+    rect(this.px, this.py, resolution, resolution);
   }
 }
 
@@ -44,49 +38,68 @@ function setup() {
 
   for(let i = 0; i < cols; i++) {
     for(let j = 0; j < rows; j++) {
-      grid[i][j] = new Cell(null);
+      grid[i][j] = new Cell(0);
     }
   }
 }
 
 function draw() {
   background(0);
+
+  if(!playing) {
+    if(mouseIsPressed) {
+      let rect = new MyRect();
+      rects.push(rect);
   
-  for(let i = 0; i < cols; i++) {
-    for(let j = 0; j < rows; j++) {
-      let x = i * resolution;
-      let y = j * resolution;
+      let j = rect.px / resolution;
+      let i = rect.py / resolution;
+      console.log("i == ", i, " e j == ", j);
+  
+      grid[i][j].value = 1;
+      console.log(grid[i][j]);
+    }
+  
+    for(let rect of rects) {
+      rect.show();
+    }
+    
+  } else {
+    
+    for(let i = 0; i < cols; i++) {
+      for(let j = 0; j < rows; j++) {
+        let x = i * resolution;
+        let y = j * resolution;
 
-      if(grid[i][j].value == 1) {
-        fill(255);
-        stroke(0);
-        rect(x, y, resolution - 1, resolution - 1);
+        if(grid[i][j].value == 1) {
+          fill(255);
+          stroke(0);
+          rect(x, y, resolution - 1, resolution - 1);
+        }
       }
     }
-  }
 
-  let next = make2DArray(cols, rows);
+    let next = make2DArray(cols, rows);
+    // Compute next based on grid
+    for(let i = 0; i < cols; i++) {
+      for(let j = 0; j < rows; j++) {
 
-  // Compute next based on grid
-  for(let i = 0; i < cols; i++) {
-    for(let j = 0; j < rows; j++) {
+        let state = grid[i][j].value;
+        // Count live neighbors!
+        let neighbors = countNeighbors(grid, i, j);
 
-      let state = grid[i][j].value;
-      // Count live neighbors!
-      let neighbors = countNeighbors(grid, i, j);
+        if(state == 0 && neighbors == 3) {
+          next[i][j] = new Cell(1);
 
-      if(state == 0 && neighbors == 3) {
-        next[i][j] = new Cell(1);
+        } else if(state == 1 && (neighbors < 2 || neighbors > 3)) {
+          next[i][j] = new Cell(0);
 
-      } else if(state == 1 && (neighbors < 2 || neighbors > 3)) {
-        next[i][j] = new Cell(0);
-
-      } else {
-        next[i][j] = new Cell(state);
+        } else {
+          next[i][j] = new Cell(state);
+        }
       }
     }
+    grid = next;
   }
-  grid = next;
 }
 
 function make2DArray(cols, rows) {
@@ -113,12 +126,8 @@ function countNeighbors(grid, x, y) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const drawButton = document.querySelector('.draw-button');
-  drawButton.onclick = () => {
-    for(let i = 0; i < cols; i++) {
-      for(let j = 0; j < rows; j++) {
-        grid[i][j] = new Cell(0);
-      }
-    }
+  const playButton = document.querySelector('.play-button');
+  playButton.onclick = () => {
+    playing = !playing;
   };
 });
