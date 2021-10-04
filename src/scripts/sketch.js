@@ -1,6 +1,4 @@
 class Cell {
-  value;
-
   constructor(value) {
     if(value === null) {
       this.value = floor(random(2));
@@ -14,7 +12,28 @@ let grid;
 let cols;
 let rows;
 let resolution = 10;
-let playClicked = false;
+
+class MyRect {
+  constructor() {
+    this.px = pwinMouseX;
+    this.py = pwinMouseY;
+    this.x = winMouseX;
+    this.y = winMouseY;
+  }
+  show() {
+    let PX = this.px - (this.px % resolution);
+    let PY = this.py - (this.py % resolution);
+    stroke(0);
+    fill(255);
+    rect(PX, PY, resolution, resolution);
+
+    let X = this.x - (this.x % resolution);
+    let Y = this.y - (this.y % resolution);
+    stroke(0);
+    fill(255);
+    rect(X, Y, resolution, resolution);
+  }
+}
 
 function setup() {
   createCanvas(800, 500);
@@ -45,7 +64,7 @@ function draw() {
       }
     }
   }
-  
+
   let next = make2DArray(cols, rows);
 
   // Compute next based on grid
