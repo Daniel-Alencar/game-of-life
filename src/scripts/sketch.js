@@ -2,14 +2,14 @@ let grid;
 let cols;
 let rows;
 let resolution = 10;
-let rects = [];
 let playing = false;
 
 function setup() {
   createCanvas(800, 500);
+  background(0);
+
   cols = width / resolution;
   rows = height / resolution;
-
   console.log("COLUMNS == ", cols);
   console.log("ROWS == ", rows);
   
@@ -23,27 +23,8 @@ function setup() {
 }
 
 function draw() {
-  background(0);
-
-  if(!playing) {
-    if(mouseIsPressed) {
-      let rect = new MyRect();
-      rects.push(rect);
-  
-      let i = rect.px / resolution;
-      let j = rect.py / resolution;
-      console.log("i(collumn) == ", i, " e j(row) == ", j);
-      
-      if(i < cols && j < rows) {
-        grid[i][j].value = 1;
-      }
-    }
-  
-    for(let rect of rects) {
-      rect.show();
-    }
-
-  } else {
+  if(playing) {
+    background(0);
     
     for(let i = 0; i < cols; i++) {
       for(let j = 0; j < rows; j++) {
@@ -79,6 +60,20 @@ function draw() {
       }
     }
     grid = next;
+
+  } else {
+    if(mouseIsPressed) {
+      let rect = new MyRect();
+      rect.show();
+  
+      let i = rect.px / resolution;
+      let j = rect.py / resolution;
+      console.log("i(collumn) == ", i, " e j(row) == ", j);
+      
+      if(i < cols && j < rows && i >= 0 && j >= 0) {
+        grid[i][j].value = 1;
+      }
+    }
   }
 }
 
@@ -105,18 +100,55 @@ function countNeighbors(grid, x, y) {
   return sum;
 }
 
+
 document.addEventListener('DOMContentLoaded', () => {
   const playButton = document.querySelector('.play-button');
-  playButton.onclick = () => {
+
+  const playOrPause = () => {
     playing = !playing;
     playButton.value = playing ? "Pause" : "Play";
+  }
+  playButton.onclick = playOrPause;
+
+  const clearButton = document.querySelector('.clear-button');
+  clearButton.onclick = () => {
+
+    background(0);
+
+    for(let i = 0; i < cols; i++) {
+      for(let j = 0; j < rows; j++) {
+        grid[i][j] = new Cell(0);
+      }
+    }
+
+    if(playing) {
+      playing = false;
+      playButton.value = "Play";
+    }
   };
 
   const randomButton = document.querySelector('.random-button');
   randomButton.onclick = () => {
+
+    background(0);
+
+    if(playing) {
+      playing = false;
+      playButton.value = "Play";
+    }
+
     for(let i = 0; i < cols; i++) {
       for(let j = 0; j < rows; j++) {
         grid[i][j] = new Cell(null);
+
+        let x = i * resolution;
+        let y = j * resolution;
+
+        if(grid[i][j].value == 1) {
+          fill(255);
+          stroke(0);
+          rect(x, y, resolution - 1, resolution - 1);
+        }
       }
     }
   };
