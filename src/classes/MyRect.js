@@ -6,7 +6,6 @@ class MyRect {
     this.y = winMouseY - (winMouseY % resolution);
   }
   show() {
-    stroke(0);
     fill(255);
     rect(this.px, this.py, resolution, resolution);
   }
