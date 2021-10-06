@@ -2,14 +2,15 @@ let grid;
 let cols;
 let rows;
 let resolution = 10;
-let rects = [];
+
 let playing = false;
 
 function setup() {
   createCanvas(800, 500);
+  background(0);
+
   cols = width / resolution;
   rows = height / resolution;
-
   console.log("COLUMNS == ", cols);
   console.log("ROWS == ", rows);
   
@@ -23,28 +24,9 @@ function setup() {
 }
 
 function draw() {
-  background(0);
 
-  if(!playing) {
-    if(mouseIsPressed) {
-      let rect = new MyRect();
-      rects.push(rect);
-  
-      let i = rect.px / resolution;
-      let j = rect.py / resolution;
-      console.log("i(collumn) == ", i, " e j(row) == ", j);
-      
-      if(i < cols && j < rows) {
-        grid[i][j].value = 1;
-      }
-    }
-  
-    for(let rect of rects) {
-      rect.show();
-    }
+  if(playing) {
 
-  } else {
-    
     for(let i = 0; i < cols; i++) {
       for(let j = 0; j < rows; j++) {
         let x = i * resolution;
@@ -79,6 +61,21 @@ function draw() {
       }
     }
     grid = next;
+
+  } else {
+    if(mouseIsPressed) {
+      let rect = new MyRect();
+      rect.show();
+
+      let i = rect.px / resolution;
+      let j = rect.py / resolution;
+
+      console.log("i(collumn) == ", i, " e j(row) == ", j);
+      
+      if(i < cols && j < rows && i >= 0 && j >= 0) {
+        grid[i][j].value = 1;
+      }
+    }
   }
 }
 
